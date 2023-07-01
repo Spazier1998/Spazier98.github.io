@@ -20,15 +20,21 @@
       padding-top: 100px;
       margin: 20px auto;
     }
+    #canvas {
+      border: 2px solid #ccc;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
+  <input type="file" id="file-input">
   <div id="drop-zone">
     拖拽照片到此区域
   </div>
   
-  <canvas id="canvas" style="display: none;"></canvas>
+  <canvas id="canvas"></canvas>
   
   <script src="main.js"></script>
 </body>
 </html>
+
