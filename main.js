@@ -1,6 +1,7 @@
 const photoContainer = document.getElementById('photo-container');
 const existingPhoto = document.getElementById('existing-photo');
 const uploadedPhoto = document.getElementById('uploaded-photo');
+const fileInput = document.getElementById('file-input');
 
 // 阻止浏览器默认的拖放行为
 photoContainer.addEventListener('dragover', (event) => {
