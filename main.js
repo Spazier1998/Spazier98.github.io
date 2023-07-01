@@ -2,6 +2,8 @@ const photoContainer = document.getElementById('photo-container');
 const existingPhoto = document.getElementById('existing-photo');
 const uploadedPhoto = document.getElementById('uploaded-photo');
 const fileInput = document.getElementById('file-input');
+const saveButton = document.getElementById('save-button');
+saveButton.addEventListener('click', saveMergedImage);
 
 // 阻止浏览器默认的拖放行为
 photoContainer.addEventListener('dragover', (event) => {
@@ -22,47 +24,70 @@ fileInput.addEventListener('change', (event) => {
   handleImage(file);
 });
 
-// 处理图片操作的逻辑
+// 定义一个数组来存储上传的图片
+let uploadedPhotos = [];
+
 function handleImage(file) {
   const reader = new FileReader();
 
   reader.onload = function (event) {
-    uploadedPhoto.src = event.target.result;
-    uploadedPhoto.onload = function () {
+    const uploadedImage = new Image();
+    uploadedImage.src = event.target.result;
+    uploadedImage.onload = function () {
       // 允许改变大小和位置
-      uploadedPhoto.setAttribute('draggable', 'true');
-      uploadedPhoto.style.cursor = 'move';
+      uploadedImage.setAttribute('draggable', 'true');
+      uploadedImage.style.cursor = 'move';
 
       // 通过事件监听器实现拖动和调整大小的功能
-      uploadedPhoto.addEventListener('dragstart', dragStart);
-      uploadedPhoto.addEventListener('dragend', dragEnd);
-      uploadedPhoto.addEventListener('mousedown', mouseDown);
-      uploadedPhoto.addEventListener('mouseup', mouseUp);
+      uploadedImage.addEventListener('dragstart', dragStart);
+      uploadedImage.addEventListener('dragend', dragEnd);
+      uploadedImage.addEventListener('mousedown', mouseDown);
+      uploadedImage.addEventListener('mouseup', mouseUp);
 
-      // 将合并后的照片保存为文件
-      saveMergedImage();
+      // 将图片添加到容器中
+      photoContainer.appendChild(uploadedImage);
+      
+      // 将图片添加到数组中
+      uploadedPhotos.push(uploadedImage);
     };
   };
 
   reader.readAsDataURL(file);
 }
 
+
 // 保存合并后的照片
 function saveMergedImage() {
   const canvas = document.createElement('canvas');
-  canvas.width = photoContainer.offsetWidth;
-  canvas.height = photoContainer.offsetHeight;
   const context = canvas.getContext('2d');
 
-  context.drawImage(existingPhoto, 0, 0);
-  context.drawImage(uploadedPhoto, uploadedPhoto.offsetLeft, uploadedPhoto.offsetTop, uploadedPhoto.offsetWidth, uploadedPhoto.offsetHeight);
+  // 设置画布的宽度和高度为容器的宽度和高度
+  canvas.width = photoContainer.offsetWidth;
+  canvas.height = photoContainer.offsetHeight;
 
+  // 首先绘制已有的照片
+  context.drawImage(existingPhoto, 0, 0);
+
+  // 遍历上传的图片，依次绘制到画布上
+  for (let i = 0; i < uploadedPhotos.length; i++) {
+    const uploadedImage = uploadedPhotos[i];
+    context.drawImage(
+      uploadedImage,
+      uploadedImage.offsetLeft,
+      uploadedImage.offsetTop,
+      uploadedImage.offsetWidth,
+      uploadedImage.offsetHeight
+    );
+  }
+
+  // 将合并后的照片保存为文件
   const mergedImage = canvas.toDataURL('image/png');
   const downloadLink = document.createElement('a');
   downloadLink.href = mergedImage;
   downloadLink.download = 'merged_image.png';
   downloadLink.click();
 }
+
 
 // 拖动开始时的处理函数
 function dragStart(event) {
