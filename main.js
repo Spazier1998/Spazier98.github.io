@@ -24,6 +24,13 @@ fileInput.addEventListener('change', (event) => {
   handleImage(file);
 });
 
+//existing-photo未将其设置为可拖动和可调整大小的元素
+existingPhoto.setAttribute('draggable', 'true');
+existingPhoto.addEventListener('dragstart', dragStart);
+existingPhoto.addEventListener('dragend', dragEnd);
+existingPhoto.addEventListener('mousedown', mouseDown);
+existingPhoto.addEventListener('mouseup', mouseUp);
+
 // 定义一个数组来存储上传的图片
 let uploadedPhotos = [];
 
@@ -79,6 +86,13 @@ function saveMergedImage() {
       uploadedImage.offsetHeight
     );
   }
+    canvas.toBlob(function (blob) {
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = 'merged_image.png';
+    downloadLink.click();
+  });
+}
 
   // 将合并后的照片保存为文件
   const mergedImage = canvas.toDataURL('image/png');
