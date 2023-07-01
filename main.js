@@ -66,4 +66,22 @@ function saveMergedImage() {
 
 // 拖动开始时的处理函数
 function dragStart(event) {
-  this.style.opacity
+  this.style.opacity = '0.5'; // 设置拖动时的不透明度
+  // 添加其他拖动开始时的逻辑
+}
+
+// 拖动结束时的处理函数
+function dragEnd(event) {
+  this.style.opacity = '1'; // 恢复元素的不透明度
+  // 添加其他拖动结束时的逻辑
+}
+
+// 鼠标按下时的处理函数
+function mouseDown(event) {
+  // 添加鼠标按下时的逻辑
+}
+
+// 鼠标松开时的处理函数
+function mouseUp(event) {
+  // 添加鼠标松开时的逻辑
+}
