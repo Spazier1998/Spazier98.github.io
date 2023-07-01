@@ -102,8 +102,10 @@ function saveMergedImage() {
   downloadLink.click();
 }
 
-// 用于存储当前选中的图片
+// 在全局范围内声明变量
 let selectedImage = null;
+let initialWidth = 0;
+let initialHeight = 0;
 
 // 拖动开始时的处理函数
 function dragStart(event) {
@@ -121,21 +123,24 @@ function dragEnd(event) {
 // 鼠标按下时的处理函数
 function mouseDown(event) {
   selectedImage = this;
-  // 记录鼠标按下时的初始位置等信息
-  // 可以实现选中框和其他逻辑
+  initialWidth = selectedImage.offsetWidth;
+  initialHeight = selectedImage.offsetHeight;
 }
 
 // 鼠标松开时的处理函数
 function mouseUp(event) {
   selectedImage = null;
-  // 处理鼠标松开后的逻辑
 }
 
 // 鼠标移动时的处理函数
 function mouseMove(event) {
   if (selectedImage) {
+    const deltaX = event.clientX - selectedImage.offsetLeft;
+    const deltaY = event.clientY - selectedImage.offsetTop;
+
     // 根据鼠标移动的距离来更新图片的位置
-    // 可以实现拖动图片的效果
+    selectedImage.style.width = initialWidth + deltaX + 'px';
+    selectedImage.style.height = initialHeight + deltaY + 'px';
   }
 }
 
