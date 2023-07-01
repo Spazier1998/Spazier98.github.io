@@ -6,3 +6,29 @@
   <li> <a href="https://www.baidu.com">这是百度</a> </li>
   <li> <a href="http://www.google.com">这是谷歌</a> </li>
 </ul>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>照片合并工具</title>
+  <style>
+    #drop-zone {
+      width: 300px;
+      height: 300px;
+      border: 2px dashed #ccc;
+      text-align: center;
+      padding-top: 100px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="drop-zone">
+    拖拽照片到此区域
+  </div>
+  
+  <canvas id="canvas" style="display: none;"></canvas>
+  
+  <script src="main.js"></script>
+</body>
+</html>
