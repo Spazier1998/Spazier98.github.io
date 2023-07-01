@@ -13,3 +13,7 @@
   height: 100%;
   object-fit: contain;
 }
+
+#existing-photo {
+  background-color: transparent;
+}
