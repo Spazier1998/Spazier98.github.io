@@ -86,14 +86,7 @@ function saveMergedImage() {
       uploadedImage.offsetHeight
     );
   }
-    canvas.toBlob(function (blob) {
-    const downloadLink = document.createElement('a');
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = 'merged_image.png';
-    downloadLink.click();
-  });
-}
-
+ 
   // 将合并后的照片保存为文件
   const mergedImage = canvas.toDataURL('image/png');
   const downloadLink = document.createElement('a');
@@ -106,6 +99,9 @@ function saveMergedImage() {
 let selectedImage = null;
 let initialWidth = 0;
 let initialHeight = 0;
+let selectionBox = null;
+let mouseX = 0;
+let mouseY = 0
 
 // 拖动开始时的处理函数
 function dragStart(event) {
@@ -125,11 +121,35 @@ function mouseDown(event) {
   selectedImage = this;
   initialWidth = selectedImage.offsetWidth;
   initialHeight = selectedImage.offsetHeight;
+
+// 创建选中框元素
+  selectionBox = document.createElement('div');
+  selectionBox.classList.add('selection-box');
+  selectionBox.style.left = event.clientX + 'px';
+  selectionBox.style.top = event.clientY + 'px';
+  selectionBox.style.width = '0';
+  selectionBox.style.height = '0';
+  photoContainer.appendChild(selectionBox);
+
+  // 记录鼠标按下时的坐标
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+
+  // 阻止事件冒泡，避免与拖动事件冲突
+  event.stopPropagation();
 }
 
 // 鼠标松开时的处理函数
 function mouseUp(event) {
   selectedImage = null;
+
+  // 移除选中框元素
+  if (selectionBox) {
+    photoContainer.removeChild(selectionBox);
+    selectionBox = null;
+  }
+
+  event.stopPropagation();
 }
 
 // 鼠标移动时的处理函数
@@ -138,10 +158,25 @@ function mouseMove(event) {
     const deltaX = event.clientX - selectedImage.offsetLeft;
     const deltaY = event.clientY - selectedImage.offsetTop;
 
+    
     // 根据鼠标移动的距离来更新图片的位置
-    selectedImage.style.width = initialWidth + deltaX + 'px';
-    selectedImage.style.height = initialHeight + deltaY + 'px';
+    selectedImage.style.left = selectedImage.offsetLeft + deltaX + 'px';
+    selectedImage.style.top = selectedImage.offsetTop + deltaY + 'px';
   }
+
+  if (selectionBox) {
+    // 计算选中框的宽度和高度
+    const width = event.clientX - mouseX;
+    const height = event.clientY - mouseY;
+
+    // 更新选中框的位置和尺寸
+    selectionBox.style.width = Math.abs(width) + 'px';
+    selectionBox.style.height = Math.abs(height) + 'px';
+    selectionBox.style.left = width > 0 ? mouseX + 'px' : event.clientX + 'px';
+    selectionBox.style.top = height > 0 ? mouseY + 'px' : event.clientY + 'px';
+  }
+
+  event.stopPropagation();
 }
 
 // 给所有图片元素添加事件监听器
@@ -153,6 +188,12 @@ images.forEach((image) => {
 });
 
 // 添加全局的鼠标移动事件监听器
-document.addEventListener('mousemove', mouseMove); // 监听鼠标移动事件，实现图片的拖动
+document.addEventListener('mousemove', mouseMove); // 监听鼠标移动事件，实现图片的拖动和选中框的绘制
 
-// 你可以根据需要进一步完善这些事件处理函数，例如实现选中框、改变大小等功能
+// 在CSS中定义
+.selection-box {
+  position: absolute;
+  border: 2px dashed #000;
+  background-color: transparent;
+  pointer-events: none;
+}
