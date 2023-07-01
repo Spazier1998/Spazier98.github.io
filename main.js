@@ -5,6 +5,13 @@ const fileInput = document.getElementById('file-input');
 const saveButton = document.getElementById('save-button');
 saveButton.addEventListener('click', saveMergedImage);
 
+//existing-photo未将其设置为可拖动和可调整大小的元素
+existingPhoto.setAttribute('draggable', 'true');
+existingPhoto.addEventListener('dragstart', dragStart);
+existingPhoto.addEventListener('dragend', dragEnd);
+existingPhoto.addEventListener('mousedown', mouseDown);
+existingPhoto.addEventListener('mouseup', mouseUp);
+
 // 阻止浏览器默认的拖放行为
 photoContainer.addEventListener('dragover', (event) => {
   event.preventDefault();
@@ -30,6 +37,8 @@ existingPhoto.addEventListener('dragstart', dragStart);
 existingPhoto.addEventListener('dragend', dragEnd);
 existingPhoto.addEventListener('mousedown', mouseDown);
 existingPhoto.addEventListener('mouseup', mouseUp);
+existingPhoto.addEventListener('mousemove', existingPhotoMouseMove);
+
 
 // 定义一个数组来存储上传的图片
 let uploadedPhotos = [];
@@ -121,6 +130,7 @@ function mouseDown(event) {
   selectedImage = this;
   initialWidth = selectedImage.offsetWidth;
   initialHeight = selectedImage.offsetHeight;
+  
 
 // 创建选中框元素
   selectionBox = document.createElement('div');
@@ -158,11 +168,19 @@ function mouseMove(event) {
     const deltaX = event.clientX - selectedImage.offsetLeft;
     const deltaY = event.clientY - selectedImage.offsetTop;
 
-    
-    // 根据鼠标移动的距离来更新图片的位置
-    selectedImage.style.left = selectedImage.offsetLeft + deltaX + 'px';
-    selectedImage.style.top = selectedImage.offsetTop + deltaY + 'px';
-  }
+    // 在鼠标移动时更新图片的位置
+if (selectedImage && selectionBox) {
+  const deltaX = event.clientX - mouseX;
+  const deltaY = event.clientY - mouseY;
+
+  // 更新图片的位置
+  selectedImage.style.left = selectedImage.offsetLeft + deltaX + 'px';
+  selectedImage.style.top = selectedImage.offsetTop + deltaY + 'px';
+
+  // 更新鼠标按下时的坐标
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+}
 
   if (selectionBox) {
     // 计算选中框的宽度和高度
@@ -189,6 +207,9 @@ images.forEach((image) => {
 
 // 添加全局的鼠标移动事件监听器
 document.addEventListener('mousemove', mouseMove); // 监听鼠标移动事件，实现图片的拖动和选中框的绘制
+  
+// 在鼠标松开时移除全局的鼠标移动事件监听器
+document.addEventListener('mouseup', mouseUp);
 
 // 在CSS中定义
 .selection-box {
