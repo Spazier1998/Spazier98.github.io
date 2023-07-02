@@ -104,6 +104,12 @@ function saveMergedImage() {
   downloadLink.click();
 }
 
+// 获取保存按钮元素（新加，为了保存图片）
+const saveButton = document.getElementById('save-button');
+
+// 绑定点击事件监听器（新加，为了保存图片）
+saveButton.addEventListener('click', saveMergedImage);
+
 // 在全局范围内声明变量
 let selectedImage = null;
 let initialWidth = 0;
